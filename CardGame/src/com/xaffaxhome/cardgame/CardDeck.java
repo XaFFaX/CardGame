@@ -1,21 +1,26 @@
 package com.xaffaxhome.cardgame;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public abstract class CardDeck<T extends Card>
+public class CardDeck
 {
-	protected List<T> cardDeck;
+	public static final List<Card> STANDARD52CARDDECK = gen52CardDeck();
 
-	protected abstract void generateDeck();
-
-	protected List<T> getCardDeck()
+	private static List<Card> gen52CardDeck()
 	{
-		return cardDeck;
+		List<Card> tempDeck = new ArrayList<Card>();
+
+		for (Card.Rank rank : Card.Rank.values())
+			for (Card.Suit suit : Card.Suit.values())
+				tempDeck.add(new Card(rank, suit));
+		return Collections.unmodifiableList(tempDeck);
+
 	}
 
-	@Override
-	public String toString()
+	private CardDeck()
 	{
-		return "CardDeck [cardDeck=" + cardDeck + "]";
+
 	}
 }

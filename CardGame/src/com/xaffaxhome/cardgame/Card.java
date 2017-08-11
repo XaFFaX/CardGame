@@ -3,16 +3,16 @@ package com.xaffaxhome.cardgame;
 import java.util.Arrays;
 import java.util.Random;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 public class Card implements Comparable<Card>
 {
 
-	private Rank				rank;
-	private Suit				suit;
-	private Color				color;
-	private static final Suit[]	REDSUITE	= { Suit.DIAMONDS, Suit.HEARTS };
-	private static final Suit[]	BLACKSUITE	= { Suit.CLUBS, Suit.SPADES };
+	private Rank rank;
+	private Suit suit;
+	private Color color;
+	private static final Suit[] REDSUITE =
+	{ Suit.DIAMONDS, Suit.HEARTS };
+	private static final Suit[] BLACKSUITE =
+	{ Suit.CLUBS, Suit.SPADES };
 
 	private static <E extends Enum<E>> E randomEnum(Class<E> e)
 	{
@@ -66,7 +66,7 @@ public class Card implements Comparable<Card>
 		this(randomEnum(Rank.class), randomEnum(Color.class));
 	}
 
-	public Card(@Nullable Rank rank, @Nullable Color color)
+	public Card(Rank rank, Color color)
 	{
 		if (rank == null)
 			this.rank = randomEnum(Rank.class);
@@ -98,7 +98,7 @@ public class Card implements Comparable<Card>
 
 	}
 
-	public Card(@Nullable Rank rank, @Nullable Suit suit)
+	public Card(Rank rank, Suit suit)
 	{
 		if (rank == null)
 			this.rank = randomEnum(Rank.class);

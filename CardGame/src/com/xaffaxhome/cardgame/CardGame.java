@@ -9,7 +9,7 @@ public class CardGame
 	{
 		Stream.generate(Card::new).limit(10)
 				.forEach(bla -> System.out.println("Stream: " + bla));
-		new Standard52CardDeck().generateDeck();
+		System.out.println(CardDeck.STANDARD52CARDDECK.toString());
 	}
 
 }
