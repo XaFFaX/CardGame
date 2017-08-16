@@ -11,12 +11,15 @@ public class Hand
 		if (deck == null || deck.isEmpty())
 			throw new IllegalStateException("You cannot draw from an deck!");
 		if (numberCards <= 0)
-			throw new IllegalStateException("You cannot draw zero or less cards!");
+			throw new IllegalStateException(
+					"You cannot draw zero or less cards!");
 		if (numberCards > deck.size())
-			throw new IllegalStateException("You cannot draw more cards than in the deck!");
+			throw new IllegalStateException(
+					"You cannot draw more cards than in the deck!");
 	}
 
-	private static List<Card> draw(final List<Card> deck, int numberCards, int type)
+	private static List<Card> draw(final List<Card> deck, int numberCards,
+			int type)
 	{
 		checkParams(deck, numberCards);
 
@@ -54,17 +57,47 @@ public class Hand
 		return (hand);
 	}
 
+	private Hand()
+	{
+
+	}
+
+	protected static void repaceCards(final List<Card> hand,
+			final List<Card> deck, final Card... toReplace)
+	{
+		if (hand == null || deck == null || toReplace == null
+				|| hand.size() == 0 || deck.size() == 0
+				|| toReplace.length == 0)
+			throw new IllegalStateException(
+					"None of the paremeters can be null or empty!");
+		int noCardstoReplace = toReplace.length;
+
+		for (Card card : toReplace)
+		{
+			if (!hand.contains(card))
+				throw new IllegalStateException("Card: " + card.toString()
+						+ " is not in the hand and thus cannot be replaced!");
+			hand.remove(card);
+		}
+
+		List<Card> drawnCards = drawTop(deck, noCardstoReplace);
+
+		hand.addAll(drawnCards);
+	}
+
 	protected static List<Card> drawTop(final List<Card> deck, int numberCards)
 	{
 		return (draw(deck, numberCards, 0));
 	}
 
-	protected static List<Card> drawBottom(final List<Card> deck, int numberCards)
+	protected static List<Card> drawBottom(final List<Card> deck,
+			int numberCards)
 	{
 		return (draw(deck, numberCards, 1));
 	}
 
-	protected static List<Card> drawRandom(final List<Card> deck, int numberCards)
+	protected static List<Card> drawRandom(final List<Card> deck,
+			int numberCards)
 	{
 		return (draw(deck, numberCards, 2));
 	}
