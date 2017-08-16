@@ -1,7 +1,6 @@
 package com.xaffaxhome.cardgame;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CardDeck
@@ -12,11 +11,10 @@ public class CardDeck
 	{
 		List<Card> tempDeck = new ArrayList<Card>();
 
-		for (Card.Rank rank : Card.Rank.values())
-			for (Card.Suit suit : Card.Suit.values())
-				tempDeck.add(new Card(rank, suit));
-		return Collections.unmodifiableList(tempDeck);
-
+		for (FrenchCard.Rank rank : Card.Rank.values())
+			for (FrenchCard.Suit suit : Card.Suit.values())
+				tempDeck.add(new FrenchCard(rank, suit));
+		return new ArrayList<Card>(tempDeck);
 	}
 
 	private CardDeck()

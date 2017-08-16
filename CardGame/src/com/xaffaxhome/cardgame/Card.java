@@ -1,29 +1,24 @@
 package com.xaffaxhome.cardgame;
 
-import java.util.Arrays;
 import java.util.Random;
 
-public class Card implements Comparable<Card>
+public abstract class Card implements Comparable<Card>
 {
+	protected Rank rank;
+	protected Suit suit;
+	protected Color color;
+	public static final Suit[] REDSUIT = { Suit.DIAMONDS, Suit.HEARTS };
+	public static final Suit[] BLACKSUIT = { Suit.CLUBS, Suit.SPADES };
 
-	private Rank rank;
-	private Suit suit;
-	private Color color;
-	private static final Suit[] REDSUITE =
-	{ Suit.DIAMONDS, Suit.HEARTS };
-	private static final Suit[] BLACKSUITE =
-	{ Suit.CLUBS, Suit.SPADES };
-
-	private static <E extends Enum<E>> E randomEnum(Class<E> e)
+	protected static <E extends Enum<E>> E randomEnum(Class<E> e)
 	{
-		return e.getEnumConstants()[new Random()
-				.nextInt(e.getEnumConstants().length)];
+		return e.getEnumConstants()[new Random().nextInt(e.getEnumConstants().length)];
 	}
 
 	protected enum Rank
 	{
-		ACE(0), ONE(1), TWO(2), TREE(3), FOUR(4), FIVE(5), SIX(6), SEVEN(
-				7), EIGHT(8), NINE(9), TEN(10), JACK(11), QUEEN(12), KING(13);
+		ACE(0), ONE(1), TWO(2), TREE(3), FOUR(4), FIVE(5), SIX(6), SEVEN(7), EIGHT(8), NINE(9), TEN(10), JACK(
+				11), QUEEN(12), KING(13);
 
 		private int rank;
 
@@ -61,59 +56,6 @@ public class Card implements Comparable<Card>
 		BLACK, RED;
 	}
 
-	public Card()
-	{
-		this(randomEnum(Rank.class), randomEnum(Color.class));
-	}
-
-	public Card(Rank rank, Color color)
-	{
-		if (rank == null)
-			this.rank = randomEnum(Rank.class);
-		else
-			this.rank = rank;
-
-		if (color == null)
-		{
-			this.suit = randomEnum(Suit.class);
-			if (Arrays.asList(REDSUITE).contains(this.suit))
-				this.color = Color.RED;
-			else
-			{
-				this.color = color;
-				if (this.color == Color.BLACK)
-					this.suit = BLACKSUITE[new Random()
-							.nextInt(BLACKSUITE.length)];
-				else
-					this.suit = REDSUITE[new Random().nextInt(REDSUITE.length)];
-			}
-		} else
-		{
-			this.color = color;
-			if (this.color == Color.BLACK)
-				this.suit = BLACKSUITE[new Random().nextInt(BLACKSUITE.length)];
-			else
-				this.suit = REDSUITE[new Random().nextInt(REDSUITE.length)];
-		}
-
-	}
-
-	public Card(Rank rank, Suit suit)
-	{
-		if (rank == null)
-			this.rank = randomEnum(Rank.class);
-		else
-			this.rank = rank;
-		if (suit == null)
-			this.suit = randomEnum(Suit.class);
-		else
-			this.suit = suit;
-		if (this.suit == Suit.CLUBS || this.suit == Suit.SPADES)
-			this.color = Color.BLACK;
-		else
-			this.color = Color.RED;
-	}
-
 	protected Rank getRank()
 	{
 		return rank;
@@ -127,16 +69,6 @@ public class Card implements Comparable<Card>
 	protected Color getColor()
 	{
 		return color;
-	}
-
-	protected static Suit[] getRedsuite()
-	{
-		return REDSUITE;
-	}
-
-	protected static Suit[] getBlacksuite()
-	{
-		return BLACKSUITE;
 	}
 
 	@Override
@@ -172,15 +104,6 @@ public class Card implements Comparable<Card>
 	@Override
 	public String toString()
 	{
-		return "Card [rank=" + rank + ", color=" + color + ", suit="
-				+ suit.suit() + "]";
+		return "Card [rank=" + rank + ", color=" + color + ", suit=" + suit.suit() + "]";
 	}
-
-	@Override
-	public int compareTo(Card o)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
