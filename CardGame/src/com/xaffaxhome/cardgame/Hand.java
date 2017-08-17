@@ -1,11 +1,49 @@
 package com.xaffaxhome.cardgame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Hand
 {
+	private static class PokerHand
+	{
+		private boolean checkStraight(final List<Card> hand)
+		{
+			List<Card> tempHand=new ArrayList<Card>(hand);
+			Collections.sort(tempHand);
+			
+			Card.Rank prevCardRank = null;
+			for (Card card : tempHand)
+			{
+				if(prevCardRank==null) prevCardRank=card.getRank();
+				else if(card.)
+			}
+			return false;
+		}
+
+		private boolean checkFlush(final List<Card> hand)
+		{
+			return false;
+		}
+
+		private boolean checkDuplicates(final List<Card> hand)
+		{
+			return false;
+		}
+
+		public Map<Integer, String> validateHand(final List<Card> hand)
+		{
+			if (hand == null || hand.size() != 5)
+				throw new IllegalStateException(
+						"You can only validate exactly 5 card hand!");
+			return null;
+		}
+	}
+
 	private static void checkParams(final List<Card> deck, int numberCards)
 	{
 		if (deck == null || deck.isEmpty())

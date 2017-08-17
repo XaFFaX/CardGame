@@ -3,8 +3,12 @@ package com.xaffaxhome.cardgame;
 import java.util.Arrays;
 import java.util.Random;
 
-public class FrenchCard extends Card
+public class FrenchCard extends Card implements Comparable<FrenchCard>
 {
+	protected Rank rank;
+	protected Suit suit;
+	protected Color color;
+
 	public FrenchCard()
 	{
 		this(randomEnum(Rank.class), randomEnum(Color.class));
@@ -26,7 +30,8 @@ public class FrenchCard extends Card
 			{
 				this.color = color;
 				if (this.color == Color.BLACK)
-					this.suit = BLACKSUIT[new Random().nextInt(BLACKSUIT.length)];
+					this.suit = BLACKSUIT[new Random()
+							.nextInt(BLACKSUIT.length)];
 				else
 					this.suit = REDSUIT[new Random().nextInt(REDSUIT.length)];
 			}
@@ -58,10 +63,9 @@ public class FrenchCard extends Card
 	}
 
 	@Override
-	public int compareTo(Card arg0)
+	public int compareTo(FrenchCard card)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return card.rank.rank() - this.rank.rank();
 	}
 
 }
