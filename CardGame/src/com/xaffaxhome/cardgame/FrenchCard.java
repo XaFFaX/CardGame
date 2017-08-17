@@ -5,9 +5,9 @@ import java.util.Random;
 
 public class FrenchCard extends Card implements Comparable<FrenchCard>
 {
-	protected Rank rank;
-	protected Suit suit;
-	protected Color color;
+	private Rank	rank;
+	private Suit	suit;
+	private Color	color;
 
 	public FrenchCard()
 	{
@@ -46,6 +46,21 @@ public class FrenchCard extends Card implements Comparable<FrenchCard>
 
 	}
 
+	protected Rank getRank()
+	{
+		return rank;
+	}
+
+	protected Suit getSuit()
+	{
+		return suit;
+	}
+
+	protected Color getColor()
+	{
+		return color;
+	}
+
 	public FrenchCard(Rank rank, Suit suit)
 	{
 		if (rank == null)
@@ -63,9 +78,16 @@ public class FrenchCard extends Card implements Comparable<FrenchCard>
 	}
 
 	@Override
+	public String toString()
+	{
+		return "FrenchCard [rank=" + rank + ", suit=" + suit + ", color="
+				+ color + "]";
+	}
+
+	@Override
 	public int compareTo(FrenchCard card)
 	{
-		return card.rank.rank() - this.rank.rank();
+		return this.rank.rank() - card.rank.rank();
 	}
 
 }

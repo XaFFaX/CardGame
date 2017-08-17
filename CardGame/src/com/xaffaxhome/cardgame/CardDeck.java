@@ -5,16 +5,16 @@ import java.util.List;
 
 public class CardDeck
 {
-	public static final List<Card> STANDARD52CARDDECK = gen52CardDeck();
+	public static final List<FrenchCard> STANDARD52CARDDECK = gen52CardDeck();
 
-	private static List<Card> gen52CardDeck()
+	private static List<FrenchCard> gen52CardDeck()
 	{
-		List<Card> tempDeck = new ArrayList<Card>();
+		List<FrenchCard> tempDeck = new ArrayList<FrenchCard>();
 
 		for (FrenchCard.Rank rank : Card.Rank.values())
 			for (FrenchCard.Suit suit : Card.Suit.values())
 				tempDeck.add(new FrenchCard(rank, suit));
-		return new ArrayList<Card>(tempDeck);
+		return new ArrayList<FrenchCard>(tempDeck);
 	}
 
 	private CardDeck()

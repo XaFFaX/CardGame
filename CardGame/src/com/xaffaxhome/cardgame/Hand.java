@@ -1,50 +1,63 @@
 package com.xaffaxhome.cardgame;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Hand
 {
-	private static class PokerHand
+	public static class PokerHand
 	{
-		private boolean checkStraight(final List<Card> hand)
+		private static boolean checkStraight(final List<FrenchCard> hand)
 		{
-			List<Card> tempHand=new ArrayList<Card>(hand);
-			Collections.sort(tempHand);
-			
+			Collections.sort(hand);
+
 			Card.Rank prevCardRank = null;
-			for (Card card : tempHand)
+			for (FrenchCard card : hand)
 			{
-				if(prevCardRank==null) prevCardRank=card.getRank();
-				else if(card.)
+				if (prevCardRank == null)
+					prevCardRank = card.getRank();
+				else if (card.getRank().rank() - prevCardRank.rank() != 1)
+					return false;
+				else
+					prevCardRank = card.getRank();
 			}
-			return false;
+			return true;
 		}
 
-		private boolean checkFlush(final List<Card> hand)
+		private static boolean checkFlush(final List<FrenchCard> hand)
 		{
-			return false;
+			return hand.stream()
+					.allMatch(c -> c.getColor() == hand.get(0).getColor());
 		}
 
-		private boolean checkDuplicates(final List<Card> hand)
+		private static boolean checkDuplicates(final List<FrenchCard> hand)
 		{
+			List<Card.Rank> handRanks = hand.stream().map(r -> r.getRank())
+					.collect(Collectors.toList());
 			return false;
 		}
 
-		public Map<Integer, String> validateHand(final List<Card> hand)
+		public static Map<Integer, String> validateHand(
+				final List<FrenchCard> hand)
 		{
 			if (hand == null || hand.size() != 5)
 				throw new IllegalStateException(
 						"You can only validate exactly 5 card hand!");
+			System.out.println("Straight: "
+					+ checkStraight(new ArrayList<FrenchCard>(hand)));
+			System.out.println(
+					"Flush: " + checkFlush(new ArrayList<FrenchCard>(hand)));
+			checkDuplicates(new ArrayList<FrenchCard>(hand));
 			return null;
 		}
 	}
 
-	private static void checkParams(final List<Card> deck, int numberCards)
+	private static void checkParams(final List<FrenchCard> deck,
+			int numberCards)
 	{
 		if (deck == null || deck.isEmpty())
 			throw new IllegalStateException("You cannot draw from an deck!");
@@ -56,40 +69,40 @@ public class Hand
 					"You cannot draw more cards than in the deck!");
 	}
 
-	private static List<Card> draw(final List<Card> deck, int numberCards,
-			int type)
+	private static List<FrenchCard> draw(final List<FrenchCard> deck,
+			int numberCards, int type)
 	{
 		checkParams(deck, numberCards);
 
-		List<Card> hand = new ArrayList<Card>();
+		List<FrenchCard> hand = new ArrayList<FrenchCard>();
 
 		for (int i = 0; i < numberCards; i++)
 		{
 			switch (type)
 			{
-				// top
-				case 0:
-				{
-					hand.add(deck.get(0));
-					deck.remove(0);
-					break;
-				}
-				// bottom
-				case 1:
-				{
+			// top
+			case 0:
+			{
+				hand.add(deck.get(0));
+				deck.remove(0);
+				break;
+			}
+			// bottom
+			case 1:
+			{
 
-					hand.add(deck.get(deck.size() - 1));
-					deck.remove(deck.size() - 1);
-					break;
-				}
-				// random
-				case 2:
-				{
-					int random = new Random().nextInt(deck.size());
-					hand.add(deck.get(random));
-					deck.remove(random);
-					break;
-				}
+				hand.add(deck.get(deck.size() - 1));
+				deck.remove(deck.size() - 1);
+				break;
+			}
+			// random
+			case 2:
+			{
+				int random = new Random().nextInt(deck.size());
+				hand.add(deck.get(random));
+				deck.remove(random);
+				break;
+			}
 			}
 		}
 		return (hand);
@@ -100,8 +113,8 @@ public class Hand
 
 	}
 
-	protected static void repaceCards(final List<Card> hand,
-			final List<Card> deck, final Card... toReplace)
+	protected static void repaceCards(final List<FrenchCard> hand,
+			final List<FrenchCard> deck, final Card... toReplace)
 	{
 		if (hand == null || deck == null || toReplace == null
 				|| hand.size() == 0 || deck.size() == 0
@@ -118,29 +131,30 @@ public class Hand
 			hand.remove(card);
 		}
 
-		List<Card> drawnCards = drawTop(deck, noCardstoReplace);
+		List<FrenchCard> drawnCards = drawTop(deck, noCardstoReplace);
 
 		hand.addAll(drawnCards);
 	}
 
-	protected static List<Card> drawTop(final List<Card> deck, int numberCards)
+	protected static List<FrenchCard> drawTop(final List<FrenchCard> deck,
+			int numberCards)
 	{
 		return (draw(deck, numberCards, 0));
 	}
 
-	protected static List<Card> drawBottom(final List<Card> deck,
+	protected static List<FrenchCard> drawBottom(final List<FrenchCard> deck,
 			int numberCards)
 	{
 		return (draw(deck, numberCards, 1));
 	}
 
-	protected static List<Card> drawRandom(final List<Card> deck,
+	protected static List<FrenchCard> drawRandom(final List<FrenchCard> deck,
 			int numberCards)
 	{
 		return (draw(deck, numberCards, 2));
 	}
 
-	protected static void showHand(final List<Card> hand)
+	protected static void showHand(final List<FrenchCard> hand)
 	{
 		hand.forEach(c -> System.out.println("Hand card: " + c));
 	}
