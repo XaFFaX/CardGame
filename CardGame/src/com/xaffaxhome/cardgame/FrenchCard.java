@@ -5,9 +5,9 @@ import java.util.Random;
 
 public class FrenchCard extends Card implements Comparable<FrenchCard>
 {
-	private Rank	rank;
-	private Suit	suit;
-	private Color	color;
+	private Rank rank;
+	private Suit suit;
+	private Color color;
 
 	public FrenchCard()
 	{

@@ -2,10 +2,14 @@ package com.xaffaxhome.cardgame;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.xaffaxhome.cardgame.Card.Rank;
 
 public class Hand
 {
@@ -38,6 +42,40 @@ public class Hand
 		{
 			List<Card.Rank> handRanks = hand.stream().map(r -> r.getRank())
 					.collect(Collectors.toList());
+			System.out.println("Hand ranks: " + handRanks);
+
+			Set<Card.Rank> singleCards = new HashSet<>();
+			Set<Card.Rank> pairCards = new HashSet<>();
+			Set<Card.Rank> tripleCards = new HashSet<>();
+			Set<Card.Rank> quadCards = new HashSet<>();
+			for (Rank rank : new HashSet<Rank>(handRanks))
+			{
+				if (Collections.frequency(handRanks, rank) == 1)
+					singleCards.add(rank);
+				else if (Collections.frequency(handRanks, rank) == 2)
+					pairCards.add(rank);
+				else if (Collections.frequency(handRanks, rank) == 3)
+					tripleCards.add(rank);
+				else if (Collections.frequency(handRanks, rank) == 4)
+					quadCards.add(rank);
+			}
+
+			if (!quadCards.isEmpty())
+				System.out.println(
+						"You have four of a kind: " + quadCards.toString());
+			else if (pairCards.size() == 2)
+				System.out
+						.println("You have two pairs: " + pairCards.toString());
+			else if (pairCards.size() == 1 && tripleCards.size() == 1)
+				System.out.println(
+						"You have a full house: " + tripleCards.toString()
+								+ " over: " + pairCards.toString());
+			else if (pairCards.size() == 1)
+				System.out.println("You have a pair: " + pairCards.toString());
+			else
+				System.out.println("You have a high card: "
+						+ Collections.max(singleCards));
+
 			return false;
 		}
 
@@ -80,29 +118,29 @@ public class Hand
 		{
 			switch (type)
 			{
-			// top
-			case 0:
-			{
-				hand.add(deck.get(0));
-				deck.remove(0);
-				break;
-			}
-			// bottom
-			case 1:
-			{
+				// top
+				case 0:
+				{
+					hand.add(deck.get(0));
+					deck.remove(0);
+					break;
+				}
+				// bottom
+				case 1:
+				{
 
-				hand.add(deck.get(deck.size() - 1));
-				deck.remove(deck.size() - 1);
-				break;
-			}
-			// random
-			case 2:
-			{
-				int random = new Random().nextInt(deck.size());
-				hand.add(deck.get(random));
-				deck.remove(random);
-				break;
-			}
+					hand.add(deck.get(deck.size() - 1));
+					deck.remove(deck.size() - 1);
+					break;
+				}
+				// random
+				case 2:
+				{
+					int random = new Random().nextInt(deck.size());
+					hand.add(deck.get(random));
+					deck.remove(random);
+					break;
+				}
 			}
 		}
 		return (hand);

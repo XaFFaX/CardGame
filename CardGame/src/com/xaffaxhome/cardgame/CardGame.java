@@ -42,11 +42,11 @@ public class CardGame
 				.println("Deck card after rand draw and replace: " + c));
 
 		Hand.PokerHand.validateHand(
-				Arrays.asList(new FrenchCard(Rank.ONE, Color.BLACK),
-						new FrenchCard(Rank.TWO, Color.BLACK),
-						new FrenchCard(Rank.TREE, Color.BLACK),
-						new FrenchCard(Rank.FOUR, Color.BLACK),
-						new FrenchCard(Rank.SEVEN, Color.BLACK)));
+				Arrays.asList(new FrenchCard(Rank.TEN, Color.BLACK),
+						new FrenchCard(Rank.ACE, Color.RED),
+						new FrenchCard(Rank.JACK, Color.BLACK),
+						new FrenchCard(Rank.KING, Color.RED),
+						new FrenchCard(Rank.QUEEN, Color.BLACK)));
 	}
 
 }
