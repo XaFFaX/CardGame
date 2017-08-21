@@ -1,17 +1,10 @@
 package com.xaffaxhome.cardgame;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-public class CardHand<T extends Card> extends ArrayList<T>
+public class CardHand<T extends Card>
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5176140221265734013L;
-
 	private void checkParams(final List<T> deck, int numberCards)
 	{
 		if (deck == null || deck.isEmpty())
@@ -32,29 +25,29 @@ public class CardHand<T extends Card> extends ArrayList<T>
 		{
 			switch (type)
 			{
-			// top
-			case 0:
-			{
-				this.add(deck.get(0));
-				deck.remove(0);
-				break;
-			}
-			// bottom
-			case 1:
-			{
+				// top
+				case 0:
+				{
+					this.add(deck.get(0));
+					deck.remove(0);
+					break;
+				}
+				// bottom
+				case 1:
+				{
 
-				this.add(deck.get(deck.size() - 1));
-				deck.remove(deck.size() - 1);
-				break;
-			}
-			// random
-			case 2:
-			{
-				int random = new Random().nextInt(deck.size());
-				this.add(deck.get(random));
-				deck.remove(random);
-				break;
-			}
+					this.add(deck.get(deck.size() - 1));
+					deck.remove(deck.size() - 1);
+					break;
+				}
+				// random
+				case 2:
+				{
+					int random = new Random().nextInt(deck.size());
+					this.add(deck.get(random));
+					deck.remove(random);
+					break;
+				}
 			}
 		}
 	}
@@ -98,20 +91,4 @@ public class CardHand<T extends Card> extends ArrayList<T>
 	{
 		hand.forEach(c -> System.out.println("Hand card: " + c));
 	}
-
-	public CardHand()
-	{
-		super();
-	}
-
-	public CardHand(Collection<? extends T> arg0)
-	{
-		super(arg0);
-	}
-
-	public CardHand(int arg0)
-	{
-		super(arg0);
-	}
-
 }

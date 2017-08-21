@@ -3,7 +3,7 @@ package com.xaffaxhome.cardgame;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardDeck
+public abstract class CardDeck
 {
 	public static final List<FrenchCard> STANDARD52CARDDECK = gen52CardDeck();
 
@@ -17,8 +17,11 @@ public class CardDeck
 		return new ArrayList<FrenchCard>(tempDeck);
 	}
 
-	private CardDeck()
-	{
+	protected abstract List<FrenchCard> drawCard(int index, int number);
 
-	}
+	protected abstract List<FrenchCard> drawCard(int number);
+
+	protected abstract void shuffleDeck();
+
+	protected abstract int cardNumber();
 }
