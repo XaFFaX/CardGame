@@ -27,14 +27,15 @@ public class PokerDeck extends CardDeck
 	@Override
 	protected List<FrenchCard> drawCard(int index, int number)
 	{
-		if (index < 1 || number < 1)
+		if (index < 0 || number < 1)
 			throw new IllegalStateException(
-					"Index or number of cards drawn cannot be less than 1!");
+					"Index cannot be less than 0 amd number of cards drawn cannot be less than 1!");
 		if (index + number > pokerDeck.size())
 			throw new IllegalStateException(
 					"You cannot draw that many cards from the deck at this index!");
 
-		List<FrenchCard> drawnCards = pokerDeck.subList(index, index + number);
+		List<FrenchCard> drawnCards = new ArrayList<>(
+				pokerDeck.subList(index, index + number));
 		pokerDeck.removeAll(drawnCards);
 		return drawnCards;
 	}
@@ -48,12 +49,18 @@ public class PokerDeck extends CardDeck
 	public PokerDeck()
 	{
 		pokerDeck = gen52CardDeck();
+		shuffleDeck();
 	}
 
 	@Override
 	protected int cardNumber()
 	{
 		return pokerDeck.size();
+	}
+
+	public List<FrenchCard> getPokerDeck()
+	{
+		return new ArrayList<FrenchCard>(pokerDeck);
 	}
 
 }

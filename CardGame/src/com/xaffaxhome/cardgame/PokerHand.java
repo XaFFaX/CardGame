@@ -1,19 +1,19 @@
 package com.xaffaxhome.cardgame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.xaffaxhome.cardgame.Card.Rank;
 
-public class PokerHand extends CardHandAbs
+public class PokerHand extends CardHand
 {
-	private List<FrenchCard> pokerHand;
+	private List<FrenchCard> pokerHand = new ArrayList<>();
 
 	// private void checkParams(final CardDeck deck, int numberCards)
 	// {
@@ -27,36 +27,79 @@ public class PokerHand extends CardHandAbs
 	// "You cannot draw more cards than in the deck!");
 	// }
 
-	public class PokerHandValidator
+	private static class PokerHandValidator
 	{
+		protected enum PokerHandValues
+		{
+			HIGH_CARD(0), ONE_PAIR(1), TWO_PAIR(2), THREE_OF_A_KIND(
+					3), STRAIGHT(4), FLUSH(5), FULL_HOUSE(
+							6), FOUR_OF_A_KIND(7), STRAIGHT_FLUSH(8);
+
+			private int handValue;
+
+			PokerHandValues(int handValue)
+			{
+				this.handValue = handValue;
+			}
+
+			protected int handValue()
+			{
+				return handValue;
+			}
+		}
+
 		private List<FrenchCard> pokerHandValidate;
+		private Integer pokerHandValue = new Integer(0);
+		private static final Integer MAIN_HAND_VALUE_COEFFICIENT = 100000;
+		private static final Integer MAIN_HAND_CARD_VALUE_COEFFICIENT = 1000;
 
 		private boolean checkStraight()
 		{
-			Collections.sort(pokerHandValidate);
+			Collections.sort(this.pokerHandValidate);
+			Integer tempHandValue = new Integer(0);
 
 			Card.Rank prevCardRank = null;
-			for (FrenchCard card : pokerHandValidate)
+			for (FrenchCard card : this.pokerHandValidate)
 			{
 				if (prevCardRank == null)
+				{
 					prevCardRank = card.getRank();
-				else if (card.getRank().rank() - prevCardRank.rank() != 1)
+					tempHandValue += card.getRank().rank();
+				} else if (card.getRank().rank() - prevCardRank.rank() != 1)
 					return false;
 				else
+				{
 					prevCardRank = card.getRank();
+					tempHandValue += card.getRank().rank();
+				}
 			}
+			this.pokerHandValue = tempHandValue + MAIN_HAND_VALUE_COEFFICIENT
+					* PokerHandValues.STRAIGHT.handValue();
 			return true;
 		}
 
 		private boolean checkFlush()
 		{
-			return pokerHandValidate.stream().allMatch(
-					c -> c.getColor() == pokerHandValidate.get(0).getColor());
+			Integer tempHandValue = new Integer(0);
+
+			for (FrenchCard card : pokerHandValidate)
+			{
+				if (card != pokerHandValidate.get(0))
+					return false;
+				tempHandValue += card.getRank().rank();
+			}
+
+			this.pokerHandValue = tempHandValue + MAIN_HAND_VALUE_COEFFICIENT
+					* PokerHandValues.FLUSH.handValue();
+			// return this.pokerHandValidate.stream().allMatch(c -> c
+			// .getColor() == this.pokerHandValidate.get(0).getColor());
+			return true;
 		}
 
 		private boolean checkDuplicates()
 		{
-			List<Card.Rank> handRanks = pokerHandValidate.stream()
+			Integer tempHandValue = new Integer(0);
+			List<Card.Rank> handRanks = this.pokerHandValidate.stream()
 					.map(r -> r.getRank()).collect(Collectors.toList());
 			System.out.println("Hand ranks: " + handRanks);
 
@@ -74,41 +117,59 @@ public class PokerHand extends CardHandAbs
 					tripleCards.add(rank);
 				else if (Collections.frequency(handRanks, rank) == 4)
 					quadCards.add(rank);
+
+				tempHandValue += rank.rank();
 			}
 
 			if (!quadCards.isEmpty())
+			{
 				System.out.println(
 						"You have four of a kind: " + quadCards.toString());
-			else if (pairCards.size() == 2)
+				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
+						* PokerHandValues.FOUR_OF_A_KIND.handValue();
+
+			} else if (pairCards.size() == 2)
+			{
 				System.out
 						.println("You have two pairs: " + pairCards.toString());
-			else if (pairCards.size() == 1 && tripleCards.size() == 1)
+				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
+						* PokerHandValues.TWO_PAIR.handValue();
+			} else if (pairCards.size() == 1 && tripleCards.size() == 1)
+			{
 				System.out.println(
 						"You have a full house: " + tripleCards.toString()
 								+ " over: " + pairCards.toString());
-			else if (pairCards.size() == 1)
+				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
+						* PokerHandValues.FULL_HOUSE.handValue();
+			} else if (pairCards.size() == 1)
+			{
 				System.out.println("You have a pair: " + pairCards.toString());
-			else
+			} else
+			{
 				System.out.println("You have a high card: "
 						+ Collections.max(singleCards));
+				tempHandValue += 10000 * PokerHandValues.HIGH_CARD.handValue();
+			}
 
+			this.pokerHandValue = tempHandValue;
 			return false;
 		}
 
-		public Map<Integer, String> validateHand()
+		public Integer validateHand()
 		{
-			if (pokerHandValidate == null || pokerHandValidate.size() != 5)
+			if (this.pokerHandValidate == null
+					|| this.pokerHandValidate.size() != 5)
 				throw new IllegalStateException(
 						"You can only validate exactly 5 card hand!");
-			System.out.println("Straight: " + checkStraight());
-			System.out.println("Flush: " + checkFlush());
-			checkDuplicates();
-			return null;
+			System.out.println("Straight: " + this.checkStraight());
+			System.out.println("Flush: " + this.checkFlush());
+			this.checkDuplicates();
+			return this.pokerHandValue;
 		}
 
 		public PokerHandValidator(List<FrenchCard> hand)
 		{
-			pokerHandValidate = new ArrayList<FrenchCard>(hand);
+			this.pokerHandValidate = new ArrayList<FrenchCard>(hand);
 		}
 	}
 
@@ -121,27 +182,28 @@ public class PokerHand extends CardHandAbs
 
 		switch (type)
 		{
-		// top
-		case 0:
-		{
-			pokerHand.addAll(deck.drawCard(numberCards));
-			break;
-		}
-		// bottom
-		case 1:
-		{
+			// top
+			case 0:
+			{
+				pokerHand.addAll(deck.drawCard(numberCards));
+				break;
+			}
+			// bottom
+			case 1:
+			{
 
-			pokerHand.addAll(deck.drawCard(deck.cardNumber() - numberCards - 1,
-					numberCards));
-			break;
-		}
-		// random
-		case 2:
-		{
-			int random = new Random().nextInt(deck.cardNumber() - numberCards);
-			pokerHand.addAll(deck.drawCard(random, numberCards));
-			break;
-		}
+				pokerHand.addAll(deck.drawCard(
+						deck.cardNumber() - numberCards - 1, numberCards));
+				break;
+			}
+			// random
+			case 2:
+			{
+				int random = new Random()
+						.nextInt(deck.cardNumber() - numberCards);
+				pokerHand.addAll(deck.drawCard(random, numberCards));
+				break;
+			}
 		}
 	}
 
@@ -183,4 +245,32 @@ public class PokerHand extends CardHandAbs
 		drawTop(deck, noCardstoReplace);
 	}
 
+	protected Integer validateHand()
+	{
+		PokerHandValidator validator = new PokerHandValidator(pokerHand);
+		return (validator.validateHand());
+	}
+
+	public PokerHand()
+	{
+
+	}
+
+	public PokerHand(PokerDeck deck)
+	{
+		drawTop(deck, 5);
+	}
+
+	public PokerHand(FrenchCard... hand)
+	{
+		if (hand.length != 5)
+			throw new IllegalStateException(
+					"Poker hand must be exactly 5 cards!");
+		pokerHand = Arrays.asList(hand);
+	}
+
+	public List<FrenchCard> getPokerHand()
+	{
+		return new ArrayList<FrenchCard>(pokerHand);
+	}
 }
