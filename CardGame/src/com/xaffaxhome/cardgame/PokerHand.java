@@ -13,7 +13,9 @@ import com.xaffaxhome.cardgame.Card.Rank;
 
 public class PokerHand extends CardHand
 {
-	private List<FrenchCard> pokerHand = new ArrayList<>();
+	private final List<FrenchCard> pokerHand;
+	private boolean validated;
+	private int handValue;
 
 	// private void checkParams(final CardDeck deck, int numberCards)
 	// {
@@ -26,6 +28,12 @@ public class PokerHand extends CardHand
 	// throw new IllegalStateException(
 	// "You cannot draw more cards than in the deck!");
 	// }
+
+	{
+		pokerHand = new ArrayList<>(5);
+		validated = false;
+		handValue = 0;
+	}
 
 	private static class PokerHandValidator
 	{
@@ -51,7 +59,9 @@ public class PokerHand extends CardHand
 		private List<FrenchCard> pokerHandValidate;
 		private Integer pokerHandValue = new Integer(0);
 		private static final Integer MAIN_HAND_VALUE_COEFFICIENT = 100000;
-		private static final Integer MAIN_HAND_CARD_VALUE_COEFFICIENT = 1000;
+		private String handText;
+		private boolean is_flush;
+		private boolean is_straight;
 
 		private boolean checkStraight()
 		{
@@ -73,6 +83,8 @@ public class PokerHand extends CardHand
 					tempHandValue += card.getRank().rank();
 				}
 			}
+			handText = "You have a straight, with a "
+					+ Collections.max(pokerHandValidate) + " card!";
 			this.pokerHandValue = tempHandValue + MAIN_HAND_VALUE_COEFFICIENT
 					* PokerHandValues.STRAIGHT.handValue();
 			return true;
@@ -84,11 +96,12 @@ public class PokerHand extends CardHand
 
 			for (FrenchCard card : pokerHandValidate)
 			{
-				if (card != pokerHandValidate.get(0))
+				if (card.getColor() != pokerHandValidate.get(0).getColor())
 					return false;
 				tempHandValue += card.getRank().rank();
 			}
-
+			handText = "You have a flush, with a "
+					+ Collections.max(pokerHandValidate) + " card!";
 			this.pokerHandValue = tempHandValue + MAIN_HAND_VALUE_COEFFICIENT
 					* PokerHandValues.FLUSH.handValue();
 			// return this.pokerHandValidate.stream().allMatch(c -> c
@@ -123,32 +136,37 @@ public class PokerHand extends CardHand
 
 			if (!quadCards.isEmpty())
 			{
-				System.out.println(
-						"You have four of a kind: " + quadCards.toString());
+				handText = "You have four of a kind: " + quadCards.toString();
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
 						* PokerHandValues.FOUR_OF_A_KIND.handValue();
 
+			} else if (pairCards.size() == 0 && tripleCards.size() == 1)
+			{
+				handText = "You have three of a kind: "
+						+ tripleCards.toString();
+				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
+						* PokerHandValues.THREE_OF_A_KIND.handValue();
 			} else if (pairCards.size() == 2)
 			{
-				System.out
-						.println("You have two pairs: " + pairCards.toString());
+				handText = "You have two pairs: " + pairCards.toString();
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
 						* PokerHandValues.TWO_PAIR.handValue();
 			} else if (pairCards.size() == 1 && tripleCards.size() == 1)
 			{
-				System.out.println(
-						"You have a full house: " + tripleCards.toString()
-								+ " over: " + pairCards.toString());
+				handText = "You have a full house: " + tripleCards.toString()
+						+ " over: " + pairCards.toString();
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
 						* PokerHandValues.FULL_HOUSE.handValue();
 			} else if (pairCards.size() == 1)
 			{
-				System.out.println("You have a pair: " + pairCards.toString());
+				handText = "You have a pair: " + pairCards.toString();
+				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
+						* PokerHandValues.ONE_PAIR.handValue();
 			} else
 			{
-				System.out.println("You have a high card: "
-						+ Collections.max(singleCards));
-				tempHandValue += 10000 * PokerHandValues.HIGH_CARD.handValue();
+				handText = "You have a high card: "
+						+ Collections.max(singleCards);
+				tempHandValue += PokerHandValues.HIGH_CARD.handValue();
 			}
 
 			this.pokerHandValue = tempHandValue;
@@ -161,9 +179,26 @@ public class PokerHand extends CardHand
 					|| this.pokerHandValidate.size() != 5)
 				throw new IllegalStateException(
 						"You can only validate exactly 5 card hand!");
-			System.out.println("Straight: " + this.checkStraight());
-			System.out.println("Flush: " + this.checkFlush());
-			this.checkDuplicates();
+			System.out.println(
+					"Straight: " + (is_straight = this.checkStraight()));
+			System.out.println("Flush: " + (is_flush = this.checkFlush()));
+			if (is_straight && !is_flush)
+				handText = "You have a straight with a "
+						+ Collections.max(pokerHandValidate).getRank()
+						+ " card!";
+			else if (!is_straight && is_flush)
+				handText = "You have a flush with a "
+						+ Collections.max(pokerHandValidate).getRank()
+						+ " card!";
+			else if (is_straight && is_flush)
+			{
+				handText = "You have a straight flush with a "
+						+ Collections.max(pokerHandValidate).getRank()
+						+ " card!!!";
+				this.pokerHandValue += 1_000_000_000;
+			} else
+				this.checkDuplicates();
+			System.out.println(handText + "\n");
 			return this.pokerHandValue;
 		}
 
@@ -178,7 +213,7 @@ public class PokerHand extends CardHand
 		// checkParams(deck, numberCards);
 		if (deck == null || deck.cardNumber() == 0)
 			throw new IllegalStateException(
-					"You cannot draw from an empty deck!");
+					"You cannot draw from an empty or non-existant deck!");
 
 		switch (type)
 		{
@@ -248,7 +283,9 @@ public class PokerHand extends CardHand
 	protected Integer validateHand()
 	{
 		PokerHandValidator validator = new PokerHandValidator(pokerHand);
-		return (validator.validateHand());
+		handValue = validator.validateHand();
+		validated = true;
+		return (handValue);
 	}
 
 	public PokerHand()
@@ -266,11 +303,27 @@ public class PokerHand extends CardHand
 		if (hand.length != 5)
 			throw new IllegalStateException(
 					"Poker hand must be exactly 5 cards!");
-		pokerHand = Arrays.asList(hand);
+		pokerHand.addAll(Arrays.asList(hand));
+		// pokerHand = Arrays.asList(hand);
 	}
 
 	public List<FrenchCard> getPokerHand()
 	{
 		return new ArrayList<FrenchCard>(pokerHand);
+	}
+
+	public boolean isValidated()
+	{
+		return validated;
+	}
+
+	public int getHandValue()
+	{
+		// Alternatively we could check if validated and validate if not before
+		// returning a value.
+		if (!this.validated)
+			throw new IllegalStateException(
+					"You first need to validate hand to get its value! Call validateHand() before this.");
+		return handValue;
 	}
 }
