@@ -8,6 +8,6 @@ public abstract class CardHand
 
 	protected abstract void drawRandom(final CardDeck deck, int numberCards);
 
-	protected abstract void repaceCards(final CardDeck deck,
+	protected abstract void replaceCards(final CardDeck deck,
 			final Card... toReplace);
 }

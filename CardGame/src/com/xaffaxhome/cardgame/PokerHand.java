@@ -65,16 +65,24 @@ public class PokerHand extends CardHand
 
 		private boolean checkStraight()
 		{
+			boolean is_ace = false;
 			Collections.sort(this.pokerHandValidate);
 			Integer tempHandValue = new Integer(0);
 
+			// need to figure this out...
 			Card.Rank prevCardRank = null;
 			for (FrenchCard card : this.pokerHandValidate)
 			{
+				if (card.getRank() == Rank.ACE)
+					is_ace = true;
 				if (prevCardRank == null)
 				{
 					prevCardRank = card.getRank();
 					tempHandValue += card.getRank().rank();
+				} else if (card.getRank() == Rank.ACE)
+				{
+					if (card.getRank().rank() - prevCardRank.rank() != 1)
+						return false;
 				} else if (card.getRank().rank() - prevCardRank.rank() != 1)
 					return false;
 				else
@@ -261,7 +269,7 @@ public class PokerHand extends CardHand
 	}
 
 	@Override
-	protected void repaceCards(final CardDeck deck, Card... toReplace)
+	protected void replaceCards(final CardDeck deck, Card... toReplace)
 	{
 		if (deck == null || toReplace == null || deck.cardNumber() == 0
 				|| toReplace.length == 0)
@@ -319,7 +327,7 @@ public class PokerHand extends CardHand
 
 	public int getHandValue()
 	{
-		// Alternatively we could check if validated and validate if not before
+		// Alternatively we could check if validated and validate if not, before
 		// returning a value.
 		if (!this.validated)
 			throw new IllegalStateException(

@@ -37,7 +37,7 @@ public class CardGame
 		deck.getPokerDeck().forEach(
 				c -> System.out.println("Deck card after rand draw: " + c));
 
-		handRand.repaceCards(deck, handRand.getPokerHand().get(0),
+		handRand.replaceCards(deck, handRand.getPokerHand().get(0),
 				handRand.getPokerHand().get(1));
 		handRand.getPokerHand().forEach(c -> System.out
 				.println("Hand card random after replace: " + c));
