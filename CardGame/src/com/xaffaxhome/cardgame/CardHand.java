@@ -1,6 +1,6 @@
 package com.xaffaxhome.cardgame;
 
-public abstract class CardHand
+public abstract class CardHand implements Comparable<CardHand>
 {
 	protected abstract void drawTop(final CardDeck deck, int numberCards);
 

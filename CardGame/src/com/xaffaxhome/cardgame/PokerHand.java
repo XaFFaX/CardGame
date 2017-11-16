@@ -13,9 +13,9 @@ import com.xaffaxhome.cardgame.Card.Rank;
 
 public class PokerHand extends CardHand
 {
-	private final List<FrenchCard> pokerHand;
-	private boolean validated;
-	private int handValue;
+	private final List<FrenchCard>	pokerHand;
+	private boolean					validated;
+	private int						handValue;
 
 	// private void checkParams(final CardDeck deck, int numberCards)
 	// {
@@ -56,22 +56,25 @@ public class PokerHand extends CardHand
 			}
 		}
 
-		private List<FrenchCard> pokerHandValidate;
-		private Integer pokerHandValue = new Integer(0);
-		private static final Integer MAIN_HAND_VALUE_COEFFICIENT = 100000;
-		private String handText;
-		private boolean is_flush;
-		private boolean is_straight;
+		private List<FrenchCard>		pokerHandValidate;
+		private Integer					pokerHandValue				= new Integer(
+				0);
+		private static final Integer	MAIN_HAND_VALUE_COEFFICIENT	= 100000;
+		private static final Integer	MAIN_CARD_VALUE_COEFFICIENT	= 1000;
+		private String					handText;
+		private boolean					is_flush;
+		private boolean					is_straight;
+		private boolean					is_5highStrait;
+		private Card					highCard;
 
 		private boolean checkStraight()
 		{
 			Collections.sort(this.pokerHandValidate);
 			Integer tempHandValue = new Integer(0);
 			int fiveHighCheck = 2;
-
-			// need to figure this out...
 			Card.Rank prevCardRank = null;
 			is_straight = true;
+			is_5highStrait = false;
 			for (FrenchCard card : this.pokerHandValidate)
 			{
 				if (prevCardRank == null)
@@ -81,12 +84,14 @@ public class PokerHand extends CardHand
 					fiveHighCheck++;
 				} else if (card.getRank().rank() - prevCardRank.rank() != 1)
 				{
-					if (fiveHighCheck != 5 || card.getRank() != Rank.ACE)
+					if (fiveHighCheck != 6 || card.getRank() != Rank.ACE)
 					{
 						is_straight = false;
 						tempHandValue += card.getRank().rank();
 					}
+					is_5highStrait = true;
 					// we assume that ACEs value in five high straight is 0
+					// this makes sure it will be the lowest straight possible
 					break;
 				} else
 				{
@@ -98,7 +103,11 @@ public class PokerHand extends CardHand
 			if (is_straight)
 			{
 				handText = "You have a straight, with a "
-						+ Collections.max(pokerHandValidate) + " card!";
+						+ (is_5highStrait ? pokerHandValidate.get(3)
+								: Collections.max(pokerHandValidate))
+						+ " high card!";
+				highCard = is_5highStrait ? pokerHandValidate.get(3)
+						: Collections.max(pokerHandValidate);
 				this.pokerHandValue = tempHandValue
 						+ MAIN_HAND_VALUE_COEFFICIENT
 								* PokerHandValues.STRAIGHT.handValue();
@@ -118,6 +127,7 @@ public class PokerHand extends CardHand
 			}
 			handText = "You have a flush, with a "
 					+ Collections.max(pokerHandValidate) + " card!";
+			highCard = Collections.max(pokerHandValidate);
 			this.pokerHandValue = tempHandValue + MAIN_HAND_VALUE_COEFFICIENT
 					* PokerHandValues.FLUSH.handValue();
 			// return this.pokerHandValidate.stream().allMatch(c -> c
@@ -127,6 +137,9 @@ public class PokerHand extends CardHand
 
 		private boolean checkDuplicates()
 		{
+			// due to operations on ranks alone, it is hard to determine what is
+			// a high card for duplicates... hence for duplicates this will be
+			// null
 			Integer tempHandValue = new Integer(0);
 			List<Card.Rank> handRanks = this.pokerHandValidate.stream()
 					.map(r -> r.getRank()).collect(Collectors.toList());
@@ -153,31 +166,44 @@ public class PokerHand extends CardHand
 			if (!quadCards.isEmpty())
 			{
 				handText = "You have four of a kind: " + quadCards.toString();
+				List<Card.Rank> tempRank = new ArrayList<Card.Rank>(quadCards);
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
-						* PokerHandValues.FOUR_OF_A_KIND.handValue();
+						* PokerHandValues.FOUR_OF_A_KIND.handValue()
+						+ MAIN_CARD_VALUE_COEFFICIENT * tempRank.get(0).rank();
 
 			} else if (pairCards.size() == 0 && tripleCards.size() == 1)
 			{
 				handText = "You have three of a kind: "
 						+ tripleCards.toString();
+				List<Card.Rank> tempRank = new ArrayList<Card.Rank>(
+						tripleCards);
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
-						* PokerHandValues.THREE_OF_A_KIND.handValue();
+						* PokerHandValues.THREE_OF_A_KIND.handValue()
+						+ MAIN_CARD_VALUE_COEFFICIENT * tempRank.get(0).rank();
 			} else if (pairCards.size() == 2)
 			{
 				handText = "You have two pairs: " + pairCards.toString();
+				List<Card.Rank> tempRank = new ArrayList<Card.Rank>(pairCards);
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
-						* PokerHandValues.TWO_PAIR.handValue();
+						* PokerHandValues.TWO_PAIR.handValue()
+						+ MAIN_CARD_VALUE_COEFFICIENT * (tempRank.get(0).rank()
+								+ tempRank.get(1).rank());
 			} else if (pairCards.size() == 1 && tripleCards.size() == 1)
 			{
 				handText = "You have a full house: " + tripleCards.toString()
 						+ " over: " + pairCards.toString();
+				List<Card.Rank> tempRank = new ArrayList<Card.Rank>(
+						tripleCards);
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
-						* PokerHandValues.FULL_HOUSE.handValue();
+						* PokerHandValues.FULL_HOUSE.handValue()
+						+ MAIN_CARD_VALUE_COEFFICIENT * tempRank.get(0).rank();
 			} else if (pairCards.size() == 1)
 			{
 				handText = "You have a pair: " + pairCards.toString();
+				List<Card.Rank> tempRank = new ArrayList<Card.Rank>(pairCards);
 				tempHandValue += MAIN_HAND_VALUE_COEFFICIENT
-						* PokerHandValues.ONE_PAIR.handValue();
+						* PokerHandValues.ONE_PAIR.handValue()
+						+ MAIN_CARD_VALUE_COEFFICIENT * tempRank.get(0).rank();
 			} else
 			{
 				handText = "You have a high card: "
@@ -198,21 +224,15 @@ public class PokerHand extends CardHand
 			System.out.println(
 					"Straight: " + (is_straight = this.checkStraight()));
 			System.out.println("Flush: " + (is_flush = this.checkFlush()));
-			if (is_straight && !is_flush)
-				handText = "You have a straight with a "
-						+ Collections.max(pokerHandValidate).getRank()
-						+ " card!";
-			else if (!is_straight && is_flush)
-				handText = "You have a flush with a "
-						+ Collections.max(pokerHandValidate).getRank()
-						+ " card!";
-			else if (is_straight && is_flush)
+
+			if (is_straight && is_flush)
 			{
 				handText = "You have a straight flush with a "
-						+ Collections.max(pokerHandValidate).getRank()
-						+ " card!!!";
+						+ ((FrenchCard) highCard).getRank().rank() + " card!!!";
 				this.pokerHandValue += 1_000_000_000;
-			} else
+			}
+
+			if (!is_straight && !is_flush)
 				this.checkDuplicates();
 			System.out.println(handText + "\n");
 			return this.pokerHandValue;
@@ -233,28 +253,27 @@ public class PokerHand extends CardHand
 
 		switch (type)
 		{
-			// top
-			case 0:
-			{
-				pokerHand.addAll(deck.drawCard(numberCards));
-				break;
-			}
-			// bottom
-			case 1:
-			{
+		// top
+		case 0:
+		{
+			pokerHand.addAll(deck.drawCard(numberCards));
+			break;
+		}
+		// bottom
+		case 1:
+		{
 
-				pokerHand.addAll(deck.drawCard(
-						deck.cardNumber() - numberCards - 1, numberCards));
-				break;
-			}
-			// random
-			case 2:
-			{
-				int random = new Random()
-						.nextInt(deck.cardNumber() - numberCards);
-				pokerHand.addAll(deck.drawCard(random, numberCards));
-				break;
-			}
+			pokerHand.addAll(deck.drawCard(deck.cardNumber() - numberCards - 1,
+					numberCards));
+			break;
+		}
+		// random
+		case 2:
+		{
+			int random = new Random().nextInt(deck.cardNumber() - numberCards);
+			pokerHand.addAll(deck.drawCard(random, numberCards));
+			break;
+		}
 		}
 	}
 
@@ -341,5 +360,17 @@ public class PokerHand extends CardHand
 			throw new IllegalStateException(
 					"You first need to validate hand to get its value! Call validateHand() before this.");
 		return handValue;
+	}
+
+	@Override
+	public int compareTo(CardHand o)
+	{
+		if (!(o instanceof PokerHand))
+			throw new ClassCastException(
+					"You can only compare PokerHand classes!");
+		if (!validated)
+			throw new IllegalStateException(
+					"You must validate hand first to compare!");
+		return this.handValue - ((PokerHand) o).handValue;
 	}
 }
