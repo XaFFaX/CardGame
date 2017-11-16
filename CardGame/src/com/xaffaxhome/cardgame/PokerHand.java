@@ -65,37 +65,45 @@ public class PokerHand extends CardHand
 
 		private boolean checkStraight()
 		{
-			boolean is_ace = false;
 			Collections.sort(this.pokerHandValidate);
 			Integer tempHandValue = new Integer(0);
+			int fiveHighCheck = 2;
 
 			// need to figure this out...
 			Card.Rank prevCardRank = null;
+			is_straight = true;
 			for (FrenchCard card : this.pokerHandValidate)
 			{
-				if (card.getRank() == Rank.ACE)
-					is_ace = true;
 				if (prevCardRank == null)
 				{
 					prevCardRank = card.getRank();
 					tempHandValue += card.getRank().rank();
-				} else if (card.getRank() == Rank.ACE)
-				{
-					if (card.getRank().rank() - prevCardRank.rank() != 1)
-						return false;
+					fiveHighCheck++;
 				} else if (card.getRank().rank() - prevCardRank.rank() != 1)
-					return false;
-				else
+				{
+					if (fiveHighCheck != 5 || card.getRank() != Rank.ACE)
+					{
+						is_straight = false;
+						tempHandValue += card.getRank().rank();
+					}
+					// we assume that ACEs value in five high straight is 0
+					break;
+				} else
 				{
 					prevCardRank = card.getRank();
 					tempHandValue += card.getRank().rank();
+					fiveHighCheck++;
 				}
 			}
-			handText = "You have a straight, with a "
-					+ Collections.max(pokerHandValidate) + " card!";
-			this.pokerHandValue = tempHandValue + MAIN_HAND_VALUE_COEFFICIENT
-					* PokerHandValues.STRAIGHT.handValue();
-			return true;
+			if (is_straight)
+			{
+				handText = "You have a straight, with a "
+						+ Collections.max(pokerHandValidate) + " card!";
+				this.pokerHandValue = tempHandValue
+						+ MAIN_HAND_VALUE_COEFFICIENT
+								* PokerHandValues.STRAIGHT.handValue();
+			}
+			return is_straight;
 		}
 
 		private boolean checkFlush()
