@@ -2,6 +2,7 @@ package com.xaffaxhome.cardgame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -17,6 +18,11 @@ public class TestCardValidate
 		FrenchCard highCard[] = { new FrenchCard(Rank.TWO, Suit.CLUBS),
 				new FrenchCard(Rank.FOUR, Suit.DIAMONDS),
 				new FrenchCard(Rank.EIGHT, Suit.CLUBS),
+				new FrenchCard(Rank.KING, Suit.CLUBS),
+				new FrenchCard(Rank.ACE, Suit.HEARTS), };
+		FrenchCard highCard_max[] = { new FrenchCard(Rank.NINE, Suit.CLUBS),
+				new FrenchCard(Rank.JACK, Suit.DIAMONDS),
+				new FrenchCard(Rank.QUEEN, Suit.CLUBS),
 				new FrenchCard(Rank.KING, Suit.CLUBS),
 				new FrenchCard(Rank.ACE, Suit.HEARTS), };
 		FrenchCard onePair_2[] = { new FrenchCard(Rank.TWO, Suit.CLUBS),
@@ -70,23 +76,41 @@ public class TestCardValidate
 				new FrenchCard(Rank.SIX, Suit.CLUBS),
 				new FrenchCard(Rank.SEVEN, Suit.CLUBS) };
 
-		List<FrenchCard[]> allHands = new ArrayList<FrenchCard[]>();
-		allHands.add(highCard);
-		allHands.add(onePair_2);
-		allHands.add(onePair_3);
-		allHands.add(twoPairs);
-		allHands.add(threeOfAKind);
-		allHands.add(straight);
-		allHands.add(straight_5high);
-		allHands.add(flush);
-		allHands.add(fullHouse);
-		allHands.add(fourOfAKind);
-		allHands.add(straightFlush);
+		List<PokerHand> allHands = new ArrayList<PokerHand>();
+		allHands.add(new PokerHand(highCard));
+		allHands.add(new PokerHand(highCard_max));
+		allHands.add(new PokerHand(onePair_2));
+		allHands.add(new PokerHand(onePair_3));
+		allHands.add(new PokerHand(twoPairs));
+		allHands.add(new PokerHand(threeOfAKind));
+		allHands.add(new PokerHand(straight));
+		allHands.add(new PokerHand(straight_5high));
+		allHands.add(new PokerHand(flush));
+		allHands.add(new PokerHand(fullHouse));
+		allHands.add(new PokerHand(fourOfAKind));
+		allHands.add(new PokerHand(straightFlush));
 
-		for (FrenchCard[] hand : allHands)
-			System.out.println(
-					"Value: " + new PokerHand(hand).validateHand() + "\n");
-		// new PokerHand(onePair).validateHand();
+		for (PokerHand hand : allHands)
+			System.out.println("Value: " + hand.validateHand() + "\n");
+
+		for (int i = 0; i < 100; i++)
+		{
+			int hand1 = new Random().nextInt(allHands.size());
+			int hand2 = new Random().nextInt(allHands.size());
+			if (allHands.get(hand1).compareTo(allHands.get(hand2)) > 0)
+				System.out.println("Hand: " + allHands.get(hand1).toString()
+						+ " is better than hand: " + allHands.get(hand2));
+			else if (allHands.get(hand1).compareTo(allHands.get(hand2)) < 0)
+				System.out.println("Hand: " + allHands.get(hand1).toString()
+						+ " is better than hand: " + allHands.get(hand2));
+			else
+				System.out.println("Hands are the same.");
+		}
+
+		// System.out.println(""
+		// + new PokerHand(onePair_2).compareTo(new PokerHand(onePair_3)));
+		// System.out.println(""
+		// + new PokerHand(onePair_3).compareTo(new PokerHand(onePair_2)));
 		// System.out.println();
 		// new PokerHand(twoPairs).validateHand();
 		// System.out.println();

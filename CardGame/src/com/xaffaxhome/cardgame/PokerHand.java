@@ -13,9 +13,9 @@ import com.xaffaxhome.cardgame.Card.Rank;
 
 public class PokerHand extends CardHand
 {
-	private final List<FrenchCard>	pokerHand;
-	private boolean					validated;
-	private int						handValue;
+	private final List<FrenchCard> pokerHand;
+	private boolean validated;
+	private int handValue;
 
 	// private void checkParams(final CardDeck deck, int numberCards)
 	// {
@@ -56,16 +56,15 @@ public class PokerHand extends CardHand
 			}
 		}
 
-		private List<FrenchCard>		pokerHandValidate;
-		private Integer					pokerHandValue				= new Integer(
-				0);
-		private static final Integer	MAIN_HAND_VALUE_COEFFICIENT	= 100000;
-		private static final Integer	MAIN_CARD_VALUE_COEFFICIENT	= 1000;
-		private String					handText;
-		private boolean					is_flush;
-		private boolean					is_straight;
-		private boolean					is_5highStrait;
-		private Card					highCard;
+		private List<FrenchCard> pokerHandValidate;
+		private Integer pokerHandValue = new Integer(0);
+		private static final Integer MAIN_HAND_VALUE_COEFFICIENT = 100000;
+		private static final Integer MAIN_CARD_VALUE_COEFFICIENT = 1000;
+		private String handText;
+		private boolean is_flush;
+		private boolean is_straight;
+		private boolean is_5highStrait;
+		private Card highCard;
 
 		private boolean checkStraight()
 		{
@@ -253,27 +252,28 @@ public class PokerHand extends CardHand
 
 		switch (type)
 		{
-		// top
-		case 0:
-		{
-			pokerHand.addAll(deck.drawCard(numberCards));
-			break;
-		}
-		// bottom
-		case 1:
-		{
+			// top
+			case 0:
+			{
+				pokerHand.addAll(deck.drawCard(numberCards));
+				break;
+			}
+			// bottom
+			case 1:
+			{
 
-			pokerHand.addAll(deck.drawCard(deck.cardNumber() - numberCards - 1,
-					numberCards));
-			break;
-		}
-		// random
-		case 2:
-		{
-			int random = new Random().nextInt(deck.cardNumber() - numberCards);
-			pokerHand.addAll(deck.drawCard(random, numberCards));
-			break;
-		}
+				pokerHand.addAll(deck.drawCard(
+						deck.cardNumber() - numberCards - 1, numberCards));
+				break;
+			}
+			// random
+			case 2:
+			{
+				int random = new Random()
+						.nextInt(deck.cardNumber() - numberCards);
+				pokerHand.addAll(deck.drawCard(random, numberCards));
+				break;
+			}
 		}
 	}
 
@@ -354,11 +354,8 @@ public class PokerHand extends CardHand
 
 	public int getHandValue()
 	{
-		// Alternatively we could check if validated and validate if not, before
-		// returning a value.
 		if (!this.validated)
-			throw new IllegalStateException(
-					"You first need to validate hand to get its value! Call validateHand() before this.");
+			this.validateHand();
 		return handValue;
 	}
 
@@ -368,9 +365,16 @@ public class PokerHand extends CardHand
 		if (!(o instanceof PokerHand))
 			throw new ClassCastException(
 					"You can only compare PokerHand classes!");
-		if (!validated)
-			throw new IllegalStateException(
-					"You must validate hand first to compare!");
+		if (!this.validated)
+			this.validateHand();
+		if (!((PokerHand) o).isValidated())
+			((PokerHand) o).validateHand();
 		return this.handValue - ((PokerHand) o).handValue;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "PokerHand [pokerHand=" + pokerHand + "]";
 	}
 }
