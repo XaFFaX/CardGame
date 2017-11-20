@@ -97,14 +97,21 @@ public class TestCardValidate
 		{
 			int hand1 = new Random().nextInt(allHands.size());
 			int hand2 = new Random().nextInt(allHands.size());
-			if (allHands.get(hand1).compareTo(allHands.get(hand2)) > 0)
+			if (allHands.get(hand2).compareTo(allHands.get(hand1)) > 0)
+				System.out.println("Hand: " + allHands.get(hand2).toString()
+						+ " with value: " + allHands.get(hand2).getHandValue()
+						+ " is better than hand: " + allHands.get(hand1)
+						+ " with value: " + allHands.get(hand1).getHandValue());
+			else if (allHands.get(hand2).compareTo(allHands.get(hand1)) < 0)
 				System.out.println("Hand: " + allHands.get(hand1).toString()
-						+ " is better than hand: " + allHands.get(hand2));
-			else if (allHands.get(hand1).compareTo(allHands.get(hand2)) < 0)
-				System.out.println("Hand: " + allHands.get(hand1).toString()
-						+ " is better than hand: " + allHands.get(hand2));
+						+ " with value: " + allHands.get(hand1).getHandValue()
+						+ " is better than hand: "
+						+ allHands.get(hand2).toString() + " with value: "
+						+ allHands.get(hand2).getHandValue());
 			else
-				System.out.println("Hands are the same.");
+				System.out.println("Hand: " + allHands.get(hand1).toString()
+						+ " is tied to hand: "
+						+ allHands.get(hand2).toString());
 		}
 
 		// System.out.println(""
