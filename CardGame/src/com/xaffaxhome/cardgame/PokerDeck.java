@@ -6,17 +6,7 @@ import java.util.List;
 
 public class PokerDeck extends CardDeck
 {
-	List<FrenchCard> pokerDeck;
-
-	private List<FrenchCard> gen52CardDeck()
-	{
-		List<FrenchCard> tempDeck = new ArrayList<FrenchCard>();
-
-		for (FrenchCard.Rank rank : Card.Rank.values())
-			for (FrenchCard.Suit suit : Card.Suit.values())
-				tempDeck.add(new FrenchCard(rank, suit));
-		return new ArrayList<FrenchCard>(tempDeck);
-	}
+	private List<FrenchCard> pokerDeck;
 
 	@Override
 	protected List<FrenchCard> drawCard(int number)
@@ -30,37 +20,37 @@ public class PokerDeck extends CardDeck
 		if (index < 0 || number < 1)
 			throw new IllegalStateException(
 					"Index cannot be less than 0 amd number of cards drawn cannot be less than 1!");
-		if (index + number > pokerDeck.size())
+		if (index + number > this.pokerDeck.size())
 			throw new IllegalStateException(
 					"You cannot draw that many cards from the deck at this index!");
 
 		List<FrenchCard> drawnCards = new ArrayList<>(
-				pokerDeck.subList(index, index + number));
-		pokerDeck.removeAll(drawnCards);
+				this.pokerDeck.subList(index, index + number));
+		this.pokerDeck.removeAll(drawnCards);
 		return drawnCards;
 	}
 
 	@Override
 	protected void shuffleDeck()
 	{
-		Collections.shuffle(pokerDeck);
+		Collections.shuffle(this.pokerDeck);
 	}
 
 	public PokerDeck()
 	{
-		pokerDeck = gen52CardDeck();
-		shuffleDeck();
+		pokerDeck = STANDARD52CARDDECK;
+		this.shuffleDeck();
 	}
 
 	@Override
 	protected int cardNumber()
 	{
-		return pokerDeck.size();
+		return this.pokerDeck.size();
 	}
 
 	public List<FrenchCard> getPokerDeck()
 	{
-		return new ArrayList<FrenchCard>(pokerDeck);
+		return new ArrayList<FrenchCard>(this.pokerDeck);
 	}
 
 }
