@@ -4,10 +4,10 @@ import java.util.Random;
 
 public abstract class Card
 {
-	public static final Suit[] REDSUIT = { Suit.DIAMONDS, Suit.HEARTS };
-	public static final Suit[] BLACKSUIT = { Suit.CLUBS, Suit.SPADES };
+	public static final Suit[]	REDSUIT		= { Suit.DIAMONDS, Suit.HEARTS };
+	public static final Suit[]	BLACKSUIT	= { Suit.CLUBS, Suit.SPADES };
 
-	protected static <E extends Enum<E>> E randomEnum(Class<E> e)
+	protected static <E extends Enum<?>> E randomEnum(Class<E> e)
 	{
 		return e.getEnumConstants()[new Random()
 				.nextInt(e.getEnumConstants().length)];
